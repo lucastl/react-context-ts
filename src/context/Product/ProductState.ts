@@ -1,14 +1,35 @@
-import React, { useReducer } from 'react';
+import { createContext, FC, useReducer } from 'react';
 import ProductReducer from './ProductReducer';
-import ProductContext from './ProductContext';
+// import ProductContext from './ProductContext';
 import { readData } from '../../accessData';
 
-const ProductState = (props) => {
-    const initialState = {
-        productsList: [],
-        productsFiltered: [],
-        selectedProduct: null
-    };
+type ProductType = {
+    "ID": string;
+    "NOME FANTASIA": string;
+};
+
+type InitialStateType = {
+    productsList: ProductType[];
+    productsFiltered: ProductType[];
+    selectedProduct: ProductType;
+};
+
+const initialState = {
+    productsList: [],
+    productsFiltered: [],
+    selectedProduct: {
+        "ID": '',
+        "NOME FANTASIA": ''
+    }
+};
+
+const ProductContext = createContext<{
+    state: InitialStateType;
+}>({
+    state: initialState,
+});
+
+const ProductState: FC = ({ children }) => {
 
     const [state, dispatch] = useReducer(ProductReducer, initialState);
 
@@ -39,17 +60,18 @@ const ProductState = (props) => {
 
     return (
         <ProductContext.Provider
-            value={{
-                productsList: state.productsList,
-                selectedProduct: state.selectedProduct,
+            value= {{
+        productsList: state.productsList,
+            selectedProduct: state.selectedProduct,
                 productsFiltered: state.productsFiltered,
-                getProducts,
-                getProductDetail,
-                searchProductsByName
-            }}
+                    getProducts,
+                    getProductDetail,
+                    searchProductsByName
+    }
+}
         >
-            {props.children}
-        </ProductContext.Provider>
+    { children }
+    < /ProductContext.Provider>
     )
 };
 
